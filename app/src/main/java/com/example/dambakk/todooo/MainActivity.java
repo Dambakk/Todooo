@@ -1,9 +1,12 @@
 package com.example.dambakk.todooo;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,12 +16,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,10 +35,22 @@ public class MainActivity extends AppCompatActivity
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
+
+            EditText input = new EditText(getApplicationContext());
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Dialog inputDialog = new AlertDialog.Builder(getApplicationContext())
+                        .setTitle("Hva skal du gjøre?")
+                        .setView(input)
+                        .setPositiveButton("Legg til", (dialogInterface, i) -> {
+                            //TODO
+                        })
+                        .setNegativeButton("Avbryt", (dialogInterface, i) -> {
+
+                        } )
+                        .create();
+
+                inputDialog.show();
             }
         });
 
@@ -53,7 +71,10 @@ public class MainActivity extends AppCompatActivity
             startActivity(showLoginPage);
             finish();
         } else {
-
+            FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction()
+                    .replace(R.id.content_main, new FrontpageFragment())
+                    .commit();
         }
 
     }
