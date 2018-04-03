@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "282591983851",
+    "firebase_url": "https://todooo-43892.firebaseio.com",
+    "project_id": "todooo-43892",
+    "storage_bucket": "todooo-43892.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:282591983851:android:55e671be4fe43772",
+        "android_client_info": {
+          "package_name": "com.example.dambakk.todooo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "282591983851-8ur5rp6q6jmpt9v9niqm06oogus7d640.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRtg73l74XasSJtgD2VcTNSCcuY4DXaxk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
