@@ -5,9 +5,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -20,10 +18,11 @@ import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
 
 
     @Override
@@ -33,25 +32,24 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-
-            EditText input = new EditText(getApplicationContext());
-            @Override
-            public void onClick(View view) {
-                Dialog inputDialog = new AlertDialog.Builder(getApplicationContext())
-                        .setTitle("Hva skal du gjøre?")
-                        .setView(input)
-                        .setPositiveButton("Legg til", (dialogInterface, i) -> {
-                            //TODO
-                        })
-                        .setNegativeButton("Avbryt", (dialogInterface, i) -> {
-
-                        } )
-                        .create();
-
-                inputDialog.show();
-            }
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(view -> {
+            EditText input = new EditText(view.getContext());
+            Dialog inputDialog = new AlertDialog.Builder(view.getContext())
+                    .setTitle("Hva skal du gjøre?")
+                    .setView(input)
+                    .setPositiveButton("Legg til", (dialogInterface, which) -> {
+                        String todoTitle = input.getText().toString();
+                        //Create TodoItemModel
+                        TodoItemModel todoItem = new TodoItemModel(todoTitle);
+                        //Save to db
+                        saveItemToDB(todoItem);
+                    })
+                    .setNegativeButton("Avbryt", (dialogInterface, i) -> {
+                        //Do nothing
+                    })
+                    .create();
+            inputDialog.show();
         });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -65,7 +63,7 @@ public class MainActivity extends AppCompatActivity
 
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user == null){
+        if (user == null) {
             //Show login page
             Intent showLoginPage = new Intent(this, LoginActivity.class);
             startActivity(showLoginPage);
@@ -77,6 +75,17 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         }
 
+    }
+
+    private void saveItemToDB(TodoItemModel todoItem) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference ref = db.getReference()
+                .child("user")
+                .child(user.getUid())
+                .child("todoItems")
+                .child(todoItem.getTimestampCreated());
+        ref.setValue(todoItem);
     }
 
     @Override
