@@ -20,6 +20,8 @@ import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -36,14 +38,16 @@ public class MainActivity extends AppCompatActivity
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
 
-            EditText input = new EditText(getApplicationContext());
             @Override
             public void onClick(View view) {
-                Dialog inputDialog = new AlertDialog.Builder(getApplicationContext())
+                EditText input = new EditText(view.getContext());
+                Dialog inputDialog = new AlertDialog.Builder(view.getContext())
                         .setTitle("Hva skal du gjøre?")
                         .setView(input)
                         .setPositiveButton("Legg til", (dialogInterface, i) -> {
-                            //TODO
+                            String title = input.getText().toString();
+                            TodoItemModel item = new TodoItemModel(title);
+                            saveToDatabase(item);
                         })
                         .setNegativeButton("Avbryt", (dialogInterface, i) -> {
 
@@ -76,6 +80,18 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.content_main, new FrontpageFragment())
                     .commit();
         }
+
+    }
+
+    private void saveToDatabase(TodoItemModel item) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference ref = db.getReference()
+                .child("user")
+                .child(user.getUid())
+                .child("todoItems")
+                .child(item.getTimestampCreated());
+        ref.setValue(item);
 
     }
 
