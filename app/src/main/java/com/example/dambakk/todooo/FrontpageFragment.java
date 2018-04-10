@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +19,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 public class FrontpageFragment extends Fragment{
 
 
     View mainView, loadingView, errorView;
+    RecyclerView recycler;
+    TodoItemRecyclerAdapter adapter;
 
     @Nullable
     @Override
@@ -34,8 +41,13 @@ public class FrontpageFragment extends Fragment{
         errorView.setVisibility(View.GONE);
         loadingView.setVisibility(View.VISIBLE);
 
-
-
+        //Initialize recyclerview
+        recycler = view.findViewById(R.id.frontpage_recycler);
+        recycler.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        adapter = new TodoItemRecyclerAdapter();
+        recycler.setAdapter(adapter);
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(recycler.getContext(), DividerItemDecoration.VERTICAL);
+        recycler.addItemDecoration(itemDecoration);
 
         listenForDatabaseChanges();
 
@@ -60,6 +72,14 @@ public class FrontpageFragment extends Fragment{
                     errorView.setVisibility(View.GONE);
                     loadingView.setVisibility(View.GONE);
 
+                    ArrayList<TodoItemModel> items = new ArrayList<>();
+                    for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                        TodoItemModel item = snapshot.getValue(TodoItemModel.class);
+                        items.add(item);
+                    }
+
+                    //Ferdig liste av items
+                    adapter.updateItems(items);
 
                 }
             }
